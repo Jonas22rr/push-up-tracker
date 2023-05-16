@@ -1,13 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET(request: Request) {
-	// const user = await getUser()
-
 	const session = await getSession();
 
 	const user = await prisma.user.findUnique({
@@ -16,11 +12,15 @@ export async function GET(request: Request) {
 		},
 	});
 
+	console.log(user);
+
 	const pushups = await prisma.pushUp.findMany({
 		where: {
 			userId: user?.id,
 		},
 	});
+
+	console.log(pushups);
 
 	return NextResponse.json(pushups);
 }
